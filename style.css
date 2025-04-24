@@ -25,10 +25,17 @@ body {
 }
   
 /* Style the logo link (notice that we set the same value of line-height and font-size to prevent the header to increase when the font gets bigger */
-.header a.logo {
+.header a.name {
+  padding: 10px;
   font-size: 25px;
   font-weight: 600;
   color: white;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: px; /* Adjust the space between logo and name */
 }
   
 /* Change the background color on mouse-over */
