@@ -1,126 +1,181 @@
-<!DOCTYPE html>
 <html>
-<head>
+  <head>
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            background: black;
-        }
-        #terminal {
-            height: 100vh;
-            color: #00ff00;
-            font-family: monospace;
-            font-size: large;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            white-space: pre-wrap;
-        }
-        .input-line {
-            display: flex;
-            align-items: center;
-        }
-        .prompt {
-            margin-right: 8px;
-        }
-        #input {
-            background: transparent;
-            border: none;
-            color: #00ff00;
-            font-family: monospace;
-            flex-grow: 1;
-            outline: none;
-            caret-color: transparent; /* Hide default cursor */
-        }
-        .cursor {
-            background: #00ff00;
-            width: 10px;
-            height: 1em;
-            display: inline-block;
-            animation: blink 1s step-end infinite;
-        }
-        @keyframes blink {
-            0%, 50% { background: #00ff00; }
-            51%, 100% { background: transparent; }
-        }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background: black;
+      }
+      #terminal {
+        height: 100vh;
+        color: #00ff00;
+        font-family: monospace;
+        font-size: large;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        display: none; /* hidden until loading completes */
+      }
+      .input-line {
+        display: flex;
+        align-items: center;
+      }
+      .prompt {
+        margin-right: 8px;
+      }
+      #input {
+        background: transparent;
+        border: none;
+        color: #00ff00;
+        font-family: monospace;
+        flex-grow: 1;
+        outline: none;
+        caret-color: transparent;
+      }
+      .cursor {
+        background: #00ff00;
+        width: 10px;
+        height: 1em;
+        display: inline-block;
+        animation: blink 1s step-end infinite;
+      }
+      @keyframes blink {
+        0%, 50% { background: #00ff00; }
+        51%, 100% { background: transparent; }
+      }
+      #loading-screen {
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: #00ff00;
+        font-family: monospace;
+        font-size: large;
+        background: black;
+      }
+      #progress-bar {
+        font-family: monospace;
+        margin-top: 10px;
+        white-space: pre;
+      }
     </style>
-</head>
-<body>
-    <div id="terminal"><span>Welcome to navlyS v1.0<br><br></span><div class="input-line">
-            <span class="prompt">user@navlys:~$</span>
-            <span id="input-display"></span>
-            <span class="cursor"></span>
-        </div>
+  </head>
+  <body>
+    <div id="loading-screen">
+      <div>Loading System Kernel...</div>
+      <div id="progress-bar">[          ]</div>
+    </div>
+
+    <div id="terminal"><span><br>                 /\                                                                              lllllll <br>                //\\                                                                             l:::::l <br>               //  \\                                                                            l:::::l <br>              //    \\                                                                           l:::::l <br>             //      \\             nnnn  nnnnnnnn      aaaaaaaaaaaaa   vvvvvvv           vvvvvvv l::::l yyyyyyy           yyyyyyy    ssssssssss <br>============//========\\            n:::nn::::::::nn    a::::::::::::a   v:::::v         v:::::v  l::::l  y:::::y         y:::::y   ss::::::::::s <br>\\         //                       n::::::::::::::nn   aaaaaaaaa:::::a   v:::::v       v:::::v   l::::l   y:::::y       y:::::y  ss:::::::::::::s <br>   \\     //                        nn:::::::::::::::n           a::::a    v:::::v     v:::::v    l::::l    y:::::y     y:::::y   s::::::ssss:::::s <br>      \\ //                           n:::::nnnn:::::n    aaaaaaa:::::a     v:::::v   v:::::v     l::::l     y:::::y   y:::::y     s:::::s  ssssss <br>       \//\                           n::::n    n::::n  aa::::::::::::a      v:::::v v:::::v      l::::l      y:::::y y:::::y        s::::::s <br>       //  \\                         n::::n    n::::n a::::aaaa::::::a       v:::::v:::::v       l::::l       y:::::y:::::y            s::::::s <br>      //      \\                      n::::n    n::::na::::a    a:::::a        v:::::::::v        l::::l        y:::::::::y       ssssss   s:::::s <br>     //          \\                   n::::n    n::::na::::a    a:::::a         v:::::::v        l::::::l        y:::::::y        s:::::ssss::::::s <br>    //              \\                n::::n    n::::na:::::aaaa::::::a          v:::::v         l::::::l         y:::::y         s::::::::::::::s <br>   //                  \\             n::::n    n::::n a::::::::::aa:::a          v:::v          l::::::l        y:::::y           s:::::::::::ss <br>  //======================\\          nnnnnn    nnnnnn  aaaaaaaaaa  aaaa           vvv           llllllll       y:::::y             sssssssssss <br>                                                                                                               y:::::y <br>                                                                                                              y:::::y <br>                                                                                                             y:::::y <br>                                                                                                            y:::::y <br>                                                                                                           yyyyyyy <br></span>
+<span>Welcome to navlyS v1.0</span><br><span>Type "help" for a list of commands</span><br>
+      <div class="input-line">
+        <span class="prompt">user@navlys:~$</span>
+        <span id="input-display"></span>
+        <span class="cursor"></span>
+      </div>
     </div>
 
     <script>
-        const terminal = document.getElementById('terminal');
-        let currentInput = '';
-        
-        // Handle key presses
-        document.addEventListener('keydown', (e) => {
-            // Ignore keys when modifier is pressed
-            if (e.ctrlKey || e.altKey || e.metaKey) return;
+      const terminal = document.getElementById("terminal");
+      const loadingScreen = document.getElementById("loading-screen");
+      const progressBar = document.getElementById("progress-bar");
 
-            if (e.key === 'Enter') {
-                // Process command
-                processCommand(currentInput);
-                currentInput = '';
-            } else if (e.key === 'Backspace') {
-                currentInput = currentInput.slice(0, -1);
-            } else if (e.key.length === 1) {
-                currentInput += e.key;
-            }
-            
-            updateDisplay();
-        });
+      let progress = 0;
+      const loadingInterval = setInterval(() => {
+        progress++;
+        const blocks = '■'.repeat(progress);
+        const spaces = ' '.repeat(10 - progress);
+        progressBar.textContent = `[${blocks}${spaces}]`;
 
-        function updateDisplay() {
-            const inputDisplay = document.getElementById('input-display');
-            inputDisplay.textContent = currentInput;
-            
-            // Keep input line in view
-            terminal.scrollTop = terminal.scrollHeight;
+        if (progress >= 10) {
+          clearInterval(loadingInterval);
+          loadingScreen.style.display = 'none';
+          terminal.style.display = 'block';
+        }
+      }, 200);
+
+      let currentInput = "";
+
+      // Handle key presses
+      document.addEventListener("keydown", (e) => {
+        // Ignore keys when modifier is pressed
+        if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+        if (e.key === "Enter") {
+          // Process command
+          processCommand(currentInput);
+          currentInput = "";
+        } else if (e.key === "Backspace") {
+          currentInput = currentInput.slice(0, -1);
+        } else if (e.key.length === 1) {
+          currentInput += e.key;
         }
 
-        function processCommand(command) {
-            // Add command to history
-            const historyLine = document.createElement('div');
-            historyLine.innerHTML = `<span class="prompt">user@navlys:~$</span>${command}`;
-            terminal.insertBefore(historyLine, terminal.lastElementChild);
+        updateDisplay();
+      });
 
-            // Create response element
-            const response = document.createElement('div');
-            
-            // Simple command handling
-            if (command === 'help') {
-                response.textContent = 'Available commands:\nhelp      | Displays a list of commands\nabout     | Displays a short bio\nclear     | Clears the screen\nprojects  | Displays a list of projects and accolades\n\n';
-            } else if (command === 'about') {    
-                response.innerHTML = 'About me:\n\n    My name is Sylvan Williams, but I go by my middle name "Buck". I am currently a student at ' + 
-                     '<a href="https://www.imaginenorthtexas.org/" ' + 
-                     'style="color: #00ff00; text-decoration: underline;" ' +
-                     'target="_blank">Imagine International Academy of North Texas</a>' + 
-                     '. I live in McKinney, TX with my family';
-            } else if (command === 'clear') {
-                terminal.innerHTML = `<div class="input-line">
-                    <span class="prompt">user@navlys:~$</span>
-                    <span id="input-display"></span>
-                    <span class="cursor"></span>
-                </div>`;
-                currentInput = '';
-                return;
-            } else if (command === 'projects') {
-                response.textContent = 'Projects:\n\n'
-            }
-            else {
-                response.textContent = `Command not found: ${command}`;
-            }
+      function updateDisplay() {
+        const inputDisplay = document.getElementById("input-display");
+        inputDisplay.textContent = currentInput;
 
-            terminal.insertBefore(response, terminal.lastElementChild);
+        // Keep input line in view
+        terminal.scrollTop = terminal.scrollHeight;
+      }
+
+      function processCommand(command) {
+        // Add command to history
+        const historyLine = document.createElement("div");
+        historyLine.innerHTML = `<span class="prompt">user@navlys:~$</span>${command}`;
+        terminal.insertBefore(historyLine, terminal.lastElementChild);
+
+        // Create response element
+        const response = document.createElement("div");
+
+        // Simple command handling
+        if (command === "help") {
+          response.textContent =
+            "Available commands:\nhelp      | Displays a list of commands\nabout     | Displays a short bio along with some accolades\nclear     | Clears the screen\nprojects  | Displays a list of projects\nnavlys    | Displays some cool ASCII art\n\n";
+        } else if (command === "about") {
+          response.innerHTML =
+            'About me:\n\n    My name is Sylvan Williams, but I go by my middle name "Buck". I am currently a student at ' +
+            '<a href="https://www.imaginenorthtexas.org/" ' +
+            'style="color: #00ff00; text-decoration: underline;" ' +
+            'target="_blank">Imagine International Academy of North Texas</a>' +
+            ". I live in McKinney, TX with my family";
+        } else if (command === "clear") {
+          // Remove all children except the input line
+          while (terminal.firstChild) {
+            terminal.removeChild(terminal.firstChild);
+          }
+          // Recreate input line
+          const inputLine = document.createElement("div");
+          inputLine.className = "input-line";
+          inputLine.innerHTML = `
+            <span class="prompt">user@navlys:~$</span>
+            <span id="input-display"></span>
+            <span class="cursor"></span>
+          `;
+          terminal.appendChild(inputLine);
+
+          currentInput = "";
+          return;
+        } else if (command === "projects") {
+          response.textContent = "Projects:\n\n";
+        } else if (command === "navlys") {
+          response.textContent =
+            "\n                 /\\                                                                              lllllll \n                //\\\\                                                                             l:::::l \n               //  \\\\                                                                            l:::::l \n              //    \\\\                                                                           l:::::l \n             //      \\\\             nnnn  nnnnnnnn      aaaaaaaaaaaaa   vvvvvvv           vvvvvvv l::::l yyyyyyy           yyyyyyy    ssssssssss \n============//========\\\\            n:::nn::::::::nn    a::::::::::::a   v:::::v         v:::::v  l::::l  y:::::y         y:::::y   ss::::::::::s \n\\\\         //                       n::::::::::::::nn   aaaaaaaaa:::::a   v:::::v       v:::::v   l::::l   y:::::y       y:::::y  ss:::::::::::::s \n   \\\\     //                        nn:::::::::::::::n           a::::a    v:::::v     v:::::v    l::::l    y:::::y     y:::::y   s::::::ssss:::::s \n      \\\\ //                           n:::::nnnn:::::n    aaaaaaa:::::a     v:::::v   v:::::v     l::::l     y:::::y   y:::::y     s:::::s  ssssss \n       \\//\\                           n::::n    n::::n  aa::::::::::::a      v:::::v v:::::v      l::::l      y:::::y y:::::y        s::::::s \n       //  \\\\                         n::::n    n::::n a::::aaaa::::::a       v:::::v:::::v       l::::l       y:::::y:::::y            s::::::s \n      //      \\\\                      n::::n    n::::na::::a    a:::::a        v:::::::::v        l::::l        y:::::::::y       ssssss   s:::::s \n     //          \\\\                   n::::n    n::::na::::a    a:::::a         v:::::::v        l::::::l        y:::::::y        s:::::ssss::::::s \n    //              \\\\                n::::n    n::::na:::::aaaa::::::a          v:::::v         l::::::l         y:::::y         s::::::::::::::s \n   //                  \\\\             n::::n    n::::n a::::::::::aa:::a          v:::v          l::::::l        y:::::y           s:::::::::::ss \n  //======================\\\\          nnnnnn    nnnnnn  aaaaaaaaaa  aaaa           vvv           llllllll       y:::::y             sssssssssss \n                                                                                                               y:::::y \n                                                                                                              y:::::y \n                                                                                                             y:::::y \n                                                                                                            y:::::y \n                                                                                                           yyyyyyy \n";
+        } else {
+          response.textContent = `Command not found: ${command}`;
         }
+
+        terminal.insertBefore(response, terminal.lastElementChild);
+      }
     </script>
-</body>
+  </body>
 </html>
