@@ -1,38 +1,126 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <title>Buck Williams | Portfolio</title>
+<html>
+<head>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: black;
+        }
+        #terminal {
+            height: 100vh;
+            color: #00ff00;
+            font-family: monospace;
+            font-size: large;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .input-line {
+            display: flex;
+            align-items: center;
+        }
+        .prompt {
+            margin-right: 8px;
+        }
+        #input {
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: monospace;
+            flex-grow: 1;
+            outline: none;
+            caret-color: transparent; /* Hide default cursor */
+        }
+        .cursor {
+            background: #00ff00;
+            width: 10px;
+            height: 1em;
+            display: inline-block;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 50% { background: #00ff00; }
+            51%, 100% { background: transparent; }
+        }
+    </style>
 </head>
-
 <body>
-  <div class="header">
-    <div class="header-left">
-      <img src="Navlys Logo thick resised.svg" alt="Buck Williams Logo" width="70" height="50">
-      <a href="#default" class="name">Buck Williams</a>
+    <div id="terminal"><span>Welcome to navlyS v1.0<br><br></span><div class="input-line">
+            <span class="prompt">user@navlys:~$</span>
+            <span id="input-display"></span>
+            <span class="cursor"></span>
+        </div>
     </div>
-    <div class="header-right">
-      <a href="#home">Home</a>
-      <a href="#projects">Projects</a><a href="#about">About</a><a href="#contact">Contact</a>
-      
 
-    </div>
-  </div> 
-  <section class="hero">
-    <div class="hero-content">
-      <h1>Hey, I'm Buck Williams.<br>Welcome to my website</h1>
-    </div>
-    <div class="scrolling-photos" id="photoContainer"></div>
-  </section>
-  <p>
-    The super cool website built by Buck Williams, who is also super cool.
-  </p>
-  <script src="script.js"></script>
+    <script>
+        const terminal = document.getElementById('terminal');
+        let currentInput = '';
+        
+        // Handle key presses
+        document.addEventListener('keydown', (e) => {
+            // Ignore keys when modifier is pressed
+            if (e.ctrlKey || e.altKey || e.metaKey) return;
 
+            if (e.key === 'Enter') {
+                // Process command
+                processCommand(currentInput);
+                currentInput = '';
+            } else if (e.key === 'Backspace') {
+                currentInput = currentInput.slice(0, -1);
+            } else if (e.key.length === 1) {
+                currentInput += e.key;
+            }
+            
+            updateDisplay();
+        });
 
+        function updateDisplay() {
+            const inputDisplay = document.getElementById('input-display');
+            inputDisplay.textContent = currentInput;
+            
+            // Keep input line in view
+            terminal.scrollTop = terminal.scrollHeight;
+        }
 
-</body></html>
+        function processCommand(command) {
+            // Add command to history
+            const historyLine = document.createElement('div');
+            historyLine.innerHTML = `<span class="prompt">user@navlys:~$</span>${command}`;
+            terminal.insertBefore(historyLine, terminal.lastElementChild);
+
+            // Create response element
+            const response = document.createElement('div');
+            
+            // Simple command handling
+            if (command === 'help') {
+                response.textContent = 'Available commands:\nhelp      | Displays a list of commands\nabout     | Displays a short bio\nclear     | Clears the screen\nprojects  | Displays a list of projects and accolades\n\n';
+            } else if (command === 'about') {    
+                response.innerHTML = 'About me:\n\n    My name is Sylvan Williams, but I go by my middle name "Buck". I am currently a student at ' + 
+                     '<a href="https://www.imaginenorthtexas.org/" ' + 
+                     'style="color: #00ff00; text-decoration: underline;" ' +
+                     'target="_blank">Imagine International Academy of North Texas</a>' + 
+                     '. I live in McKinney, TX with my family';
+            } else if (command === 'clear') {
+                terminal.innerHTML = `<div class="input-line">
+                    <span class="prompt">user@navlys:~$</span>
+                    <span id="input-display"></span>
+                    <span class="cursor"></span>
+                </div>`;
+                currentInput = '';
+                return;
+            } else if (command === 'projects') {
+                response.textContent = 'Projects:\n\n'
+            }
+            else {
+                response.textContent = `Command not found: ${command}`;
+            }
+
+            terminal.insertBefore(response, terminal.lastElementChild);
+        }
+    </script>
+</body>
+</html>
