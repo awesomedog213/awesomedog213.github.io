@@ -73,7 +73,7 @@
     </div>
 
     <div id="terminal"><span><br>                 /\                                                                              lllllll <br>                //\\                                                                             l:::::l <br>               //  \\                                                                            l:::::l <br>              //    \\                                                                           l:::::l <br>             //      \\             nnnn  nnnnnnnn      aaaaaaaaaaaaa   vvvvvvv           vvvvvvv l::::l yyyyyyy           yyyyyyy    ssssssssss <br>============//========\\            n:::nn::::::::nn    a::::::::::::a   v:::::v         v:::::v  l::::l  y:::::y         y:::::y   ss::::::::::s <br>\\         //                       n::::::::::::::nn   aaaaaaaaa:::::a   v:::::v       v:::::v   l::::l   y:::::y       y:::::y  ss:::::::::::::s <br>   \\     //                        nn:::::::::::::::n           a::::a    v:::::v     v:::::v    l::::l    y:::::y     y:::::y   s::::::ssss:::::s <br>      \\ //                           n:::::nnnn:::::n    aaaaaaa:::::a     v:::::v   v:::::v     l::::l     y:::::y   y:::::y     s:::::s  ssssss <br>       \//\                           n::::n    n::::n  aa::::::::::::a      v:::::v v:::::v      l::::l      y:::::y y:::::y        s::::::s <br>       //  \\                         n::::n    n::::n a::::aaaa::::::a       v:::::v:::::v       l::::l       y:::::y:::::y            s::::::s <br>      //      \\                      n::::n    n::::na::::a    a:::::a        v:::::::::v        l::::l        y:::::::::y       ssssss   s:::::s <br>     //          \\                   n::::n    n::::na::::a    a:::::a         v:::::::v        l::::::l        y:::::::y        s:::::ssss::::::s <br>    //              \\                n::::n    n::::na:::::aaaa::::::a          v:::::v         l::::::l         y:::::y         s::::::::::::::s <br>   //                  \\             n::::n    n::::n a::::::::::aa:::a          v:::v          l::::::l        y:::::y           s:::::::::::ss <br>  //======================\\          nnnnnn    nnnnnn  aaaaaaaaaa  aaaa           vvv           llllllll       y:::::y             sssssssssss <br>                                                                                                               y:::::y <br>                                                                                                              y:::::y <br>                                                                                                             y:::::y <br>                                                                                                            y:::::y <br>                                                                                                           yyyyyyy <br></span>
-<span>Welcome to navlyS v1.0</span><br><span>Type "help" for a list of commands</span><br>
+<span>Welcome to navlyS v1.0!</span><br><span>A personal portfolio in the form of an interactive shell</span><br><span>Type "help" for a list of commands</span><br>
       <div class="input-line">
         <span class="prompt">user@navlys:~$</span>
         <span id="input-display"></span>
@@ -81,7 +81,27 @@
       </div>
     </div>
 
+    <div id="small-screen-warning" style="display:none; color:#00ff00; font-family:monospace; font-size:large; padding:20px; background:black;">
+        The screen on this device is too small. Please switch to a larger computer. (Or zoom out, if possible)
+    </div>
+
     <script>
+      function checkScreenSize() {
+        const minWidth = 1457; // Minimum width required to display ASCII art properly
+        const warning = document.getElementById("small-screen-warning");
+        const terminal = document.getElementById("terminal");
+
+        if (window.innerWidth < minWidth) {
+          warning.style.display = "block";
+          terminal.style.display = "none";
+        } else {
+          warning.style.display = "none";
+          terminal.style.display = "block";
+          }
+      }
+
+
+
       const terminal = document.getElementById("terminal");
       const loadingScreen = document.getElementById("loading-screen");
       const progressBar = document.getElementById("progress-bar");
@@ -97,8 +117,12 @@
           clearInterval(loadingInterval);
           loadingScreen.style.display = 'none';
           terminal.style.display = 'block';
+          checkScreenSize();
         }
       }, 200);
+
+      window.addEventListener("resize", checkScreenSize);
+      window.addEventListener("load", checkScreenSize);
 
       let currentInput = "";
 
@@ -147,7 +171,7 @@
             '<a href="https://www.imaginenorthtexas.org/" ' +
             'style="color: #00ff00; text-decoration: underline;" ' +
             'target="_blank">Imagine International Academy of North Texas</a>' +
-            ". I live in McKinney, TX with my family.\nI'm interested in pretty much all things tech-related. I've written a few of my own programs, I've designed and setup websites (including this one), I run the light and sound systems at my local church, I've worked a little in 3D modeling and 3D printing, and I've even done a little bit of video editing. I'm looking for new opportunites to learn interesting and useful skills in the world of computer science such as AI, data management, and cybersecurity.\n    Besides computers, I also have recently gotten more involved in philosophical topics, reading books like 1984 by George Orwell (one of my new favorites) and The Stranger by Albert Camus. I'm also involved in the Texas YMCA Youth and Government (similar to a debate team) where young students like me can participate in debating and come up with ideas for new laws that we think need to be made. It's a very fun extracurricular and it gives me a good excuse to hang out with my friends. Another extracurricular I'm especially involved in is my Bible study club. We started in 8th grade, and I've been the leader of it ever since. We've grown from three or four people to almost two dozen in the past few years. (To put that into perspetive, my school has under 1,400 students and there are 75 students in my grade). It's been really encouraging seeing people discover God and get together to study the Bible, even when they could be doing anything else like playing video games or doing homework. My faith is a big part of my life because it gives me a purpose behind all the grades and activities.\n\nAccolades:\n[Coming Soon!!]\n\n";
+            ". I live in McKinney, TX with my family.\nI'm interested in pretty much all things tech-related. I've written a few of my own programs, I've designed and setup websites (including this one), I run the light and sound systems at my local church, I've worked a little in 3D modeling and 3D printing, and I've even done a little bit of video editing. I'm looking for new opportunites to learn interesting and useful skills in the world of computer science such as AI, data management, and cybersecurity.\n    Besides computers, I also have recently gotten more involved in philosophical topics, reading books like 1984 by George Orwell (one of my new favorites) and The Stranger by Albert Camus. I'm also involved in the Texas YMCA Youth and Government (similar to a debate team) where young students like me can participate in debating and come up with ideas for new laws that we think need to be made. It's a very fun extracurricular and it gives me a good excuse to hang out with my friends. Another extracurricular I'm especially involved in is my Bible study club. We started in 8th grade, and I've been the leader of it ever since. We've grown from three or four people to almost two dozen in the past few years. (To put that into perspetive, my school has under 1,400 students and there are 75 students in my grade). It's been really encouraging seeing people discover God and get together to study the Bible, even when they could be doing anything else like playing video games or doing homework. My faith is a big part of my life because it gives me a purpose behind all the grades and activities.\n    I have several goals in life, some of which being in the distant future, like getting married or having kids, and some are in the near future, like getting my driver's license or getting into a good college. My goals are not confined to the abstract, however. I can think of several more-specific topics that I wish to study, such as Quantum Mechanics and Machine Learning. In conclusion, all my goals align to one purpose: to make the future the best it can be. Whether that means advancing technology forward to benefit humanity, practicing good monetary stratagies to eventually sustain a family, or investing in my treasures in Heaven, I'm going to give it my all to make the future the best it can be for me and for those around me.\n\nAccolades:\n[Coming Soon!!]\n\n";
         } else if (command === "clear") {
           // Remove all children except the input line
           while (terminal.firstChild) {
