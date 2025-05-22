@@ -2,41 +2,78 @@
 <html>
 <head>
   <title>Goodbye Imagine! 🥲</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: sans-serif;
-      max-width: 600px;
-      margin: 0 auto;
+      max-width: 100%;
+      margin: 0;
       padding: 20px;
+      box-sizing: border-box;
+      background: #f9f9f9;
     }
     form {
       margin-bottom: 30px;
     }
-    textarea {
+    input[type="text"], textarea {
       width: 100%;
-      height: 80px;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    textarea {
+      height: 100px;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
     }
     #messages p {
-      background: #f3f3f3;
-      padding: 8px;
-      border-radius: 6px;
+      background: #fff;
+      padding: 12px;
+      border-radius: 8px;
       margin-bottom: 10px;
+      border: 1px solid #ddd;
+    }
+    label {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    label input[type="checkbox"] {
+      margin-right: 8px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #333;
     }
   </style>
 </head>
 <body>
   <h1>Goodbye Imagine!</h1>
-  <h2>This is how you can <b>BE REMEMBERED:</b></h2>
+  <h2>This is how you can BE REMEMBERED</h2>
   <form id="messageForm">
-    <input type="text" id="name" placeholder='Your name (optional)' /><br/><br/>
-    <textarea id="message" placeholder="Your message (leave contact info if you want!!!)" required></textarea><br/><br/>
+    <input type="text" id="name" placeholder="Your name (optional)" />
+    <textarea id="message" placeholder="Your message" required></textarea>
     <label>
       <input type="checkbox" id="private" />
       Private message (only I can see this)
-    </label><br/><br/>
+    </label>
     <button type="submit">Send</button>
   </form>
-  <p>Hello, everyone. My name is Sylvan Buck Williams, but most of you know me as just "Buck". I just finished 10th grade here at Imagine, and I've been here since kindergarten. To all of you--close friends and acquaintances--you have been my family for the past 11 years, and I've made memories here that I'll never forget. Please, please, PLEASE leave your messages here, I promise I will read and re-read all of them. <br><br>Don't let me be that guy that you forget right after I leave, and keep me from forgetting you by leaving a message and/or any contact info. You can use the private message checkbox above to send a private message.<br><br>If you need someone to talk to about almost anything, or prayer, or just want to BE REMEMBERED by me, leave a message and your name and number and we will definitely keep in touch. <br></br>I love you all! </br>-Buck</p>
+  <p>Hello, everyone. My name is Sylvan Buck Williams, but most of you know me as just "Buck". I just finished 10th grade here at Imagine, and I've been here since kindergarten. To all of you--close friends and acquaintances--you have been my family for the past 11 years, and I've made memories here that I'll never forget. Please, please, PLEASE leave your messages here, I promise I will read and re-read all of them. <br><br>Don't let me be that guy that you forget right after I leave, and keep me from forgetting you by leaving a message and/or any contact info. You can use the private message checkbox above to send a private message.<br><br>If you need someone to talk to about almost anything, or prayer, or just want to BE REMEMBERED by me, leave a message and your name and number and we will definitely keep in touch. <br><br>I love you all! <br>-Buck</p>
   <h2>Messages</h2>
   <div id="messages"></div>
 
@@ -88,7 +125,7 @@
         const data = doc.data();
         if (data.private) return;
         const p = document.createElement("p");
-        p.textContent = `${data.name || "Anonymous"}:\n ${data.message}`;
+        p.textContent = `${data.name || "Anonymous"}: ${data.message}`;
         messagesDiv.appendChild(p);
       });
     }
