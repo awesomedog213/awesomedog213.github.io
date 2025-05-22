@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Be Remembered</title>
+  <style>
+    /* A bit of basic styling */
+    #collage {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 4px;
+    }
+    #collage img {
+      width: 100%;
+      /* Forces a square aspect ratio */
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Be Remembered</h1>
+  <form id="messageForm">
+    <input type="text" id="name" placeholder="Your name (optional)" /><br/>
+    <textarea id="message" placeholder="Your message" required></textarea><br/>
+    <input type="file" id="image" accept="image/*" /><br/>
+    <label>
+      <input type="checkbox" id="private" />
+      Private message (only I can see this)
+    </label><br/>
+    <button type="submit">Send</button>
+  </form>
+  
+
+  <h2>Messages</h2>
+  <div id="messages"></div>
+
+  <h2>Image Collage</h2>
+  <div id="collage"></div>
+
+  <!-- Firebase SDK and our custom script -->
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // Replace these with your Firebase config values
+    const firebaseConfig = {
+        apiKey: "AIzaSyChd3QnUubTbw7a84OqnpAk7BzuF2gZreE",
+        authDomain: "goodbyeimagine.firebaseapp.com",
+        projectId: "goodbyeimagine",
+        storageBucket: "goodbyeimagine.firebasestorage.app",
+        messagingSenderId: "30615070252",appId: "1:30615070252:web:72b15b864b401929b65389"
+    };
+
+
+    // Initialize Firebase and Firestore
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Grab form and display elements
+    const form = document.getElementById("messageForm");
+    const messagesDiv = document.getElementById("messages");
+    const collageDiv = document.getElementById("collage");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById("name").value;
+      const message = document.getElementById("message").value;
+      const imageFile = document.getElementById("image").files[0];
+      const isPrivate = document.getElementById("private").checked;
+
+      
+      
+      let imageUrl = null;
+
+      // If an image is selected, upload it to Imgur
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("image", imageFile);
+        try {
+          const res = await fetch("https://api.imgur.com/3/image", {
+            method: "POST",
+            headers: {
+              // Replace with your Imgur Client ID
+              Authorization: "Client-ID bb10fd5568f7c40"
+            },
+            body: formData
+          });
+          const data = await res.json();
+          if (data.success) {
+            imageUrl = data.data.link;
+          } else {
+            console.error("Imgur upload failed", data);
+          }
+        } catch (error) {
+          console.error("Error uploading image:", error);
+        }
+      }
+      
+      // Save the message (and image URL if available) to Firestore
+      await addDoc(collection(db, "messages"), {
+        name,
+        message,
+        imageUrl,
+        private: isPrivate,
+        timestamp: Date.now()
+      });
+      
+      form.reset();
+      loadMessages();
+    });
+
+    // Function to load messages and images from Firestore
+    async function loadMessages() {
+      messagesDiv.innerHTML = "";
+      collageDiv.innerHTML = "";
+      
+      const messagesRef = collection(db, "messages");
+      // Order messages by timestamp (newest first)
+      const q = query(messagesRef, orderBy("timestamp", "desc"));
+      const querySnapshot = await getDocs(q);
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        // Create a paragraph for the text message
+        const p = document.createElement("p");
+        p.textContent = `${data.name || "Anonymous"}: ${data.message}`;
+        messagesDiv.appendChild(p);
+        
+        // If there's an image URL, add an image element to the collage
+        if (data.imageUrl) {
+          const img = document.createElement("img");
+          img.src = data.imageUrl;
+          collageDiv.appendChild(img);
+        }
+      });
+    }
+
+    // Initial load
+    loadMessages();
+  </script>
+</body>
+</html>
